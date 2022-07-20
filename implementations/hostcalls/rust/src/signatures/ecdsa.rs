@@ -1,14 +1,14 @@
-use ::sha2::{Digest, Sha256};
+use ::sha2::{Digest, Sha256, Sha384};
 use k256::ecdsa::{
     self as ecdsa_k256, signature::DigestVerifier as _, signature::RandomizedDigestSigner as _,
 };
 use k256::elliptic_curve::sec1::ToEncodedPoint as _;
-use k256::pkcs8::{DecodePrivateKey as _, DecodePublicKey as _, EncodePrivateKey as _};
+use k256::pkcs8::{DecodePrivateKey as _, DecodePublicKey as _, EncodePrivateKey as _, EncodePublicKey as _};
 use p256::ecdsa::{
     self as ecdsa_p256, signature::DigestVerifier as _, signature::RandomizedDigestSigner as _,
 };
 use p256::elliptic_curve::sec1::ToEncodedPoint as _;
-use p256::pkcs8::{DecodePrivateKey as _, EncodePrivateKey as _};
+use p256::pkcs8::{DecodePrivateKey as _, EncodePrivateKey as _, EncodePublicKey as _, DecodePublicKey as _};
 use p384::ecdsa::{
     self as ecdsa_p384, signature::DigestVerifier as _, signature::RandomizedDigestSigner as _,
 };
@@ -17,7 +17,6 @@ use p384::pkcs8::{DecodePrivateKey as _, EncodePrivateKey as _, EncodePublicKey 
 use std::convert::TryFrom;
 use std::sync::Arc;
 use der::pem::LineEnding;
-use sha2::Sha384;
 
 use super::signature::*;
 use super::*;
@@ -123,6 +122,30 @@ impl EcdsaSignatureKeyPair {
         Ok(raw)
     }
 
+    fn as_pkcs8(&self) -> Result<Vec<u8>, CryptoError> {
+        match self.ctx.as_ref() {
+            /*EcdsaSigningKeyVariant::P256(x) => x.to_pkcs8_der(LineEnding::LF),
+            EcdsaSigningKeyVariant::K256(x) => x.to_pkcs8_der(LineEnding::LF),
+            EcdsaSigningKeyVariant::P384(x) => {
+                x.to_pkcs8_der(LineEnding::LF)
+            }*/
+            _ => bail!(CryptoError::UnsupportedAlgorithm)
+        }
+        bail!(CryptoError::NotImplemented)
+    }
+
+    fn as_pem(&self) -> Result<Vec<u8>, CryptoError> {
+        match self.ctx.as_ref() {
+            /*EcdsaSigningKeyVariant::P256(x) => x.to_pkcs8_pem(LineEnding::LF),
+            EcdsaSigningKeyVariant::K256(x) => x.to_pkcs8_pem(LineEnding::LF),
+            EcdsaSigningKeyVariant::P384(x) => {
+                x.to_pkcs8_pem(LineEnding::LF)
+            }*/
+            _ => bail!(CryptoError::UnsupportedAlgorithm)
+        }
+        bail!(CryptoError::NotImplemented)
+    }
+
     pub fn generate(
         alg: SignatureAlgorithm,
         _options: Option<SignatureOptions>,
@@ -168,6 +191,8 @@ impl EcdsaSignatureKeyPair {
     pub fn export(&self, encoding: KeyPairEncoding) -> Result<Vec<u8>, CryptoError> {
         match encoding {
             KeyPairEncoding::Raw => self.as_raw(),
+            KeyPairEncoding::Pkcs8 => self.as_pkcs8(),
+            KeyPairEncoding::Pem => self.as_pem(),
             _ => bail!(CryptoError::UnsupportedEncoding),
         }
     }
