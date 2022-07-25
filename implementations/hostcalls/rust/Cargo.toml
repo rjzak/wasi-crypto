@@ -40,10 +40,14 @@ p384 = { version = "0.11.1", features = [
     "pkcs8",
     "pem",
 ] }
+rsa = { version = "0.6.1", features = [
+    "std",
+    "pem"
+] }
 pqcrypto-traits = { version = "0.3.4", optional = true }
 pqcrypto-kyber = { version = "0.7.6", optional = true }
 
-rand_core = { version = "0.6.3", default-features = false, package = "rand_core" }
+rand_core = { version = "0.6.3", features = ["getrandom"], package = "rand_core" }
 rand_core_05 = { package = "rand_core", version = "0.5", default-features = false }
 serde = { version = "1.0.140", features = ["derive"] }
 sha2 = "0.10.2"

@@ -2,7 +2,7 @@ mod ecdsa;
 mod eddsa;
 mod keypair;
 mod publickey;
-mod rsa;
+mod rsa_impl;
 mod secretkey;
 mod signature;
 
